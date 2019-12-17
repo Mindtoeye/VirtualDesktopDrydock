@@ -1,0 +1,62 @@
+
+.desktop {
+  margin: 0px;
+  padding: 3px;
+  border: 0px solid red;
+  height: 100%;
+  overflow: hidden;
+
+background: -moz-linear-gradient(333deg, rgba(97,97,97,1) 0%, rgba(0,0,0,1) 100%); /* ff3.6+ */
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, rgba(97,97,97,1)), color-stop(100%, rgba(0,0,0,1))); /* safari4+,chrome */
+background: -webkit-linear-gradient(333deg, rgba(97,97,97,1) 0%, rgba(0,0,0,1) 100%); /* safari5.1+,chrome10+ */
+background: -o-linear-gradient(333deg, rgba(97,97,97,1) 0%, rgba(0,0,0,1) 100%); /* opera 11.10+ */
+background: -ms-linear-gradient(333deg, rgba(97,97,97,1) 0%, rgba(0,0,0,1) 100%); /* ie10+ */
+background: linear-gradient(117deg, rgba(97,97,97,1) 0%, rgba(0,0,0,1) 100%); /* w3c */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#616161', endColorstr='#000000',GradientType=1 ); /* ie6-9 */
+}
+
+.desktop_icon
+{
+	position: absolute;
+	display: table;		
+	border-collapse: collapse;
+	
+	border: 0px solid green;
+}
+ 
+.desktop_icon .desktop_icon_row 
+{
+	display: table-row;
+	border: 0px solid red;
+}	
+
+.desktop_icon .iconface
+{
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	padding: 0px;
+	margin: 0px;
+	
+	border: 0px solid blue;
+}	
+
+.desktop_label
+{
+	text-shadow:1px 1px 1px rgba(43,43,43,1);
+	font-weight:normal;
+	color:#ffffff;
+	letter-spacing:0pt;
+	word-spacing:2pt;
+	font-size:12px;
+	text-align:center;
+	font-family:arial, helvetica, sans-serif;
+	line-height:1;
+	padding: 4px;
+}
+
+.desktop_icon_highlighted
+{
+	border: 1px solid #dddddd;
+	background: rgba(63, 191, 191, 0.1);
+}
