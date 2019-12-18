@@ -8,14 +8,12 @@ import '../../css/desktop.css';
 
 import defaultIcon from '../../css/images/app-icon.png';
 
-var desktopIconList=[{
+var apps=[{
     "label" : "pipeline1",
-    "type" : "knossys:pipeline",
-    "icon" : defaultIcon
+    "type" : "knossys:pipeline"
   },{
     "label" : "pipeline2",
-    "type" : "knossys:pipeline",
-    "icon" : defaultIcon
+    "type" : "knossys:pipeline"
   },{
     "label" : "dataset1",
     "type" : "knossys:dataset",
@@ -45,7 +43,7 @@ class DryDock extends Component {
    */
   render() {
     return (
-     <Desktop icons={desktopIconList}/>
+     <Desktop icons={apps} snap={true}/>
     );
   }
 }
