@@ -24,6 +24,8 @@
 
 .desktop_icon {
   padding: 2px;
+  width-min: 64px;
+  height-min: 64px;
   position: absolute;
   display: table;		
   /*border-collapse: collapse;*/

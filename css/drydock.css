@@ -3,7 +3,7 @@
   position: fixed;
   right: 10px;
   bottom: 10px;
-  width: 150px;
+  width: 177px;
   height: 300px;
   border: 1px solid #7d7c7c59;
   background: #272626bd;
@@ -23,8 +23,8 @@
 }
 
 .drydockconstrictor {
-  padding-left: 4px;
-  padding-right: 4px;
+  padding-left: 9px;
+  padding-right: 9px;
 }
 
 .button {

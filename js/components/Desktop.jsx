@@ -43,6 +43,8 @@ class Desktop extends Component {
 
     this.state = {
       iconDim: 32,
+      autoLayout: false,
+      snap: false,
       snapIcons: snapIcons,
       mouseDown: false,
       mouseXOld: 0,
@@ -64,6 +66,7 @@ class Desktop extends Component {
     this.onMouseUp=this.onMouseUp.bind(this);
 
     this.onIconSizeChange=this.onIconSizeChange.bind(this);
+    this.onAutolayoutChange=this.onAutolayoutChange.bind(this);
 
     document.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
@@ -180,6 +183,12 @@ class Desktop extends Component {
   	if (this.state.mouseDown==true) {
       var deltaX = (newMouseX - this.state.mouseX);
       var deltaY = (newMouseY - this.state.mouseY);
+
+      if ((deltaX!=0) || (deltaY!=0)) {
+        this.setState({
+          autoLayout: false
+        });
+      }
 
   	  let updatedIconList=this.dataTools.deepCopy (this.state.icons);
 
@@ -309,6 +318,12 @@ class Desktop extends Component {
     let index=0;
     let xIndex=marginX;
     let yIndex=marginY;
+
+    let separation=this.state.iconDim;
+
+    if (separation<64) {
+      separation=64;
+    }
    
     for (let j=0;j<updatedIconList.length;j++) {
       var xPos=xIndex;
@@ -319,16 +334,14 @@ class Desktop extends Component {
       if (index>10) {
         index=0;
         xIndex=marginX;
-        yIndex+=(this.state.iconDim+paddingY);
+        yIndex+=(separation+paddingY);
       } else {
-        xIndex+=(this.state.iconDim+paddingX);
+        xIndex+=(separation+paddingX);
       }
 
       updatedIconList [j].x=xPos;
       updatedIconList [j].y=yPos;
     }
-
-    console.log (JSON.stringify (updatedIconList));
 
     this.setState ({icons: updatedIconList}, (e) => {
       this.saveState ();
@@ -341,8 +354,34 @@ class Desktop extends Component {
   onIconSizeChange = (value) => {
     this.setState({
       iconDim: value
+    },(e) => {
+      if (this.state.autoLayout==true) {
+      	this.onLayout (null);
+      }
     });
-  };  
+  };
+
+  /**
+   *
+   */
+  onAutolayoutChange = (event) => {
+  	console.log ("onAutolayoutChange ()");
+
+    this.setState({
+      autoLayout: event.target.checked
+    });  	
+  }
+
+  /**
+   *
+   */
+  onSnapChange = (event) => {
+  	console.log ("onSnapChange ()");
+
+    this.setState({
+      snap: event.target.checked
+    });  	
+  }  
 
   /**
    * 
@@ -359,17 +398,28 @@ class Desktop extends Component {
    
     return (
       <div id="desktop" className="desktop">
-      {icons}
-      {status}
-      <div className="drydockpanel">
-        <button className="button" style={{width: "100%"}} id="layout" onClick={this.onLayout}>Layout</button>
-        <div className="drydockbox">
-          <p>Icon Size: {this.state.iconDim}px</p>
-          <div className="drydockconstrictor">
-            <Slider min={32} max={128} defaultValue={32} value={this.state.iconDim} onChange={this.onIconSizeChange} />
-          </div>
-        </div>        
-      </div>
+        {icons}
+        {status}
+	    <div className="drydockpanel">
+	      <button className="button" style={{width: "100%"}} id="layout" onClick={this.onLayout}>Layout</button>
+
+	      <div className="drydockbox">
+	        <p>Auto Layout</p>
+	        <input type="checkbox" checked={this.state.autoLayout} onChange={this.onAutolayoutChange} />
+	      </div>
+
+	      <div className="drydockbox">
+	        <p>Snap to grid</p>
+	        <input type="checkbox" checked={this.state.snap} onChange={this.onSnapChange} />
+	      </div>	      
+
+	      <div className="drydockbox">
+	        <p>Icon Size: {this.state.iconDim}px</p>
+	        <div className="drydockconstrictor">
+	          <Slider min={32} max={128} defaultValue={32} value={this.state.iconDim} onChange={this.onIconSizeChange} />
+	        </div>
+	      </div>
+	    </div>
       </div>
     );
   }
