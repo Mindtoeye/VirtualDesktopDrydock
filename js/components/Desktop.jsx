@@ -184,17 +184,17 @@ class Desktop extends Component {
       var deltaX = (newMouseX - this.state.mouseX);
       var deltaY = (newMouseY - this.state.mouseY);
 
-      if ((deltaX!=0) || (deltaY!=0)) {
-        this.setState({
-          autoLayout: false
-        });
-      }
-
   	  let updatedIconList=this.dataTools.deepCopy (this.state.icons);
 
   	  for (let i=0;i<updatedIconList.length;i++) {
         let icon=updatedIconList [i];
         if (icon.moving==true) {
+          if ((deltaX!=0) || (deltaY!=0)) {
+            this.setState({
+              autoLayout: false
+            });
+          }
+  	
           icon.x=(icon.x+deltaX);
           icon.y=(icon.y+deltaY);
         }
@@ -369,7 +369,9 @@ class Desktop extends Component {
 
     this.setState({
       autoLayout: event.target.checked
-    });  	
+    },(e) => {
+      this.onLayout (null);
+    });
   }
 
   /**
