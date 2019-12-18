@@ -44,7 +44,7 @@ class DesktopIcon extends Component {
     return (<div className="desktop_icon" style={{left: this.props.icon.x, top: this.props.icon.y}} onMouseDown={(e) => this.onMouseDown (e,this.props.icon.uuid)} onDoubleClick={(e) => this.onDesktopIconClick (e,this.props.icon.uuid)} >
       <div className="desktop_icon_row">
         <div className="iconface">
-          <img src={this.props.icon.icon} style={{padding: "0px", margin: "0px"}} draggable="false" />
+          <img src={this.props.icon.icon} style={{padding: "0px", margin: "0px", width: this.props.dim, height: this.props.dim}} draggable="false" />
         </div>
       </div>
       <div className="desktop_label">{this.props.icon.label}</div>

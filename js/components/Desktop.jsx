@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 
+import Slider, { Range } from 'rc-slider';
+// We can just import Slider or Range to reduce bundle size
+// import Slider from 'rc-slider/lib/Slider';
+// import Range from 'rc-slider/lib/Range';
+import 'rc-slider/assets/index.css';
+
 import DataTools from './utils/datatools';
 import CookieStorage from './utils/cookiestorage';
 import DesktopIcon from './DesktopIcon';
 
 import '../../css/desktop.css';
+import '../../css/drydock.css';
 
-import defaultIcon from '../../css/images/app-icon.png';
+import defaultIcon from '../../css/images/app.png';
 
 var marginX = 4;
 var marginY = 4;
@@ -25,6 +32,9 @@ class Desktop extends Component {
   constructor (props){
     super (props);
 
+    this.dataTools=new DataTools ();
+    this.cookieStorage=new CookieStorage ();
+
     let snapIcons=false;
 
     if (props.snap) {
@@ -32,31 +42,28 @@ class Desktop extends Component {
     }
 
     this.state = {
+      iconDim: 32,
       snapIcons: snapIcons,
       mouseDown: false,
       mouseXOld: 0,
       mouseYOld: 0,
       mouseX: 0,
-      mouseY: 0
-    }
-
-    this.dataTools=new DataTools ();
-    this.cookieStorage=new CookieStorage ();
-
-    this.state = {
+      mouseY: 0,
       icons: this.prep (this.props.icons)
     }
-   
-    this.loadSettings ();
+
+    //this.loadSettings ();
 
     this.saveState = this.saveState.bind (this);
-    
+    this.onLayout = this.onLayout.bind (this);
     this.onDesktopIconClick=this.onDesktopIconClick.bind (this);
     this.onMouseDownIcon=this.onMouseDownIcon.bind(this);
    
     this.onMouseMove=this.onMouseMove.bind(this);
     this.onMouseDown=this.onMouseDown.bind(this);
     this.onMouseUp=this.onMouseUp.bind(this);
+
+    this.onIconSizeChange=this.onIconSizeChange.bind(this);
 
     document.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
@@ -147,9 +154,9 @@ class Desktop extends Component {
         if (index>10) {
           index=0;
           xIndex=marginX;
-          yIndex+=(iconDim+paddingY);
+          yIndex+=(this.state.iconDim+paddingY);
         } else {
-          xIndex+=(iconDim+paddingX);
+          xIndex+=(this.state.iconDim+paddingX);
         }
 
         icon.x=xPos;
@@ -164,8 +171,6 @@ class Desktop extends Component {
    * 
    */
   onMouseMove (e) {
-  	//console.log ("onMouseMove ()");
-
   	var oldX = this.state.mouseX;
   	var oldY = this.state.mouseY;
 
@@ -176,14 +181,11 @@ class Desktop extends Component {
       var deltaX = (newMouseX - this.state.mouseX);
       var deltaY = (newMouseY - this.state.mouseY);
 
-      //console.log (oldX + ", " + oldY +", " + newMouseX + ", " + newMouseY + ", " + deltaX + ", " + deltaY);
-
   	  let updatedIconList=this.dataTools.deepCopy (this.state.icons);
 
   	  for (let i=0;i<updatedIconList.length;i++) {
         let icon=updatedIconList [i];
         if (icon.moving==true) {
-          //console.log ("From ("+icon.x+","+icon.y+") => ("+(icon.x+deltaX)+","+(icon.y+deltaY)+")")
           icon.x=(icon.x+deltaX);
           icon.y=(icon.y+deltaY);
         }
@@ -297,6 +299,52 @@ class Desktop extends Component {
   }
 
   /**
+   * @param {any} e
+   */
+  onLayout (e) {
+  	console.log ("onLayout ()");
+
+    let updatedIconList=this.dataTools.deepCopy (this.state.icons);
+
+    let index=0;
+    let xIndex=marginX;
+    let yIndex=marginY;
+   
+    for (let j=0;j<updatedIconList.length;j++) {
+      var xPos=xIndex;
+      var yPos=yIndex;
+	      
+      index++;
+	      
+      if (index>10) {
+        index=0;
+        xIndex=marginX;
+        yIndex+=(this.state.iconDim+paddingY);
+      } else {
+        xIndex+=(this.state.iconDim+paddingX);
+      }
+
+      updatedIconList [j].x=xPos;
+      updatedIconList [j].y=yPos;
+    }
+
+    console.log (JSON.stringify (updatedIconList));
+
+    this.setState ({icons: updatedIconList}, (e) => {
+      this.saveState ();
+    });
+  }
+
+  /**
+   *
+   */
+  onIconSizeChange = (value) => {
+    this.setState({
+      iconDim: value
+    });
+  };  
+
+  /**
    * 
    */  
   render() {
@@ -306,22 +354,22 @@ class Desktop extends Component {
        
     for (let i=0;i<this.state.icons.length;i++) {
       let icon=this.state.icons [i];
-
-      /*
-      if (this.state.mouseDown==false) {
-        icons.push (<DesktopIcon key={"icon-"+i} icon={icon} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
-      } else {
-        icons.push (<DesktopIcon key={"icon-"+i} icon={icon} />);
-      }
-      */
-
-      icons.push (<DesktopIcon key={"icon-"+i} icon={icon} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
+      icons.push (<DesktopIcon key={"icon-"+i} icon={icon} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
     }
    
     return (
       <div id="desktop" className="desktop">
       {icons}
       {status}
+      <div className="drydockpanel">
+        <button className="button" style={{width: "100%"}} id="layout" onClick={this.onLayout}>Layout</button>
+        <div className="drydockbox">
+          <p>Icon Size: {this.state.iconDim}px</p>
+          <div className="drydockconstrictor">
+            <Slider min={32} max={128} defaultValue={32} value={this.state.iconDim} onChange={this.onIconSizeChange} />
+          </div>
+        </div>        
+      </div>
       </div>
     );
   }

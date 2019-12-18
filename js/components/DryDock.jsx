@@ -6,7 +6,7 @@ import Desktop from './Desktop';
 import '../../css/main.css';
 import '../../css/desktop.css';
 
-import defaultIcon from '../../css/images/app-icon.png';
+import defaultIcon from '../../css/images/app.png';
 
 var apps=[{
     "label" : "pipeline1",
