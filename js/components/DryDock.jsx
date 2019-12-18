@@ -10,12 +10,15 @@ import defaultIcon from '../../css/images/app-icon.png';
 
 var apps=[{
     "label" : "pipeline1",
+    "id": "app1", // This needs to be stable since we use it to store state
     "type" : "knossys:pipeline"
   },{
     "label" : "pipeline2",
+    "id": "app2", // This needs to be stable since we use it to store state
     "type" : "knossys:pipeline"
   },{
     "label" : "dataset1",
+    "id": "app3", // This needs to be stable since we use it to store state
     "type" : "knossys:dataset",
     "icon" : defaultIcon
   },  
