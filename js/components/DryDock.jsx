@@ -15,7 +15,7 @@ var apps=[{
   },{
     "label" : "Settings",
     "id": "app2", // This needs to be stable since we use it to store state
-    "type" : "knossys:pipeline"
+    "type" : "knossys:settings"
   },{
     "label" : "Knossys",
     "id": "app3", // This needs to be stable since we use it to store state
@@ -37,9 +37,16 @@ class DryDock extends Component {
     super(props);
     
     this.dataTools=new DataTools ();
+  
+    this.launch = this.launch.bind(this);
+  }
 
-    this.state = {
-    };    
+  /**
+   *
+   */
+  launch (anApp) {
+    console.log ("launch ()");
+
   }
 
   /**
@@ -47,7 +54,7 @@ class DryDock extends Component {
    */
   render() {
     return (
-     <Desktop icons={apps} snap={true}/>
+     <Desktop icons={apps} snap={true} launch={this.launch} />
     );
   }
 }

@@ -293,15 +293,36 @@ class Desktop extends Component {
   }
 
   /**
+   *
+   */
+  launchInternal (anIcon) {
+    let result=false;
+
+    if (anIcon.type=="knossys:url") {
+      window.open(anIcon.url, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+      result=true;
+    }   
+
+    return (result);
+  }
+
+  /**
    * @param {any} e
    */
   onDesktopIconClick (e,uuid) {
-  	console.log ("onDesktopIconClick ("+uuid+")");
+  	//console.log ("onDesktopIconClick ("+uuid+")");
 
     for (let i=0;i<this.state.icons.length;i++) {
       let icon=this.state.icons [i];
       if (icon.uuid==uuid) {
-      	console.log ("Launching: " + icon.label);
+      	//console.log ("Launching: " + icon.label);
+
+        if (this.launchInternal (icon)==false) {
+          if (this.props.launch) {
+            this.props.launch (icon);
+          }
+        }
+
       	return;
       }
     }

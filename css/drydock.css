@@ -91,3 +91,9 @@
   -ms-touch-action: pan-x;
   touch-action: pan-x;
 }
+
+.rc-slider-handle:focus {
+  border-color: #57c5f7;
+  box-shadow: 0 0 0 0px #96dbfa;
+  outline: none;
+}
