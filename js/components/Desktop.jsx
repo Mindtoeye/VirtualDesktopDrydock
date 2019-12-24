@@ -41,8 +41,10 @@ class Desktop extends Component {
       snapIcons=props.snap;
     }
 
+    let prepped=this.prep (this.props.icons);
+
     this.state = {
-      iconDim: 32,
+      iconDim: iconDim,
       autoLayout: false,
       snap: false,
       snapIcons: snapIcons,
@@ -51,7 +53,7 @@ class Desktop extends Component {
       mouseYOld: 0,
       mouseX: 0,
       mouseY: 0,
-      icons: this.prep (this.props.icons)
+      icons: prepped
     }
 
     //this.loadSettings ();
@@ -157,9 +159,9 @@ class Desktop extends Component {
         if (index>10) {
           index=0;
           xIndex=marginX;
-          yIndex+=(this.state.iconDim+paddingY);
+          yIndex+=(iconDim+paddingY);
         } else {
-          xIndex+=(this.state.iconDim+paddingX);
+          xIndex+=(iconDim+paddingX);
         }
 
         icon.x=xPos;
