@@ -54,7 +54,9 @@ class DryDock extends Component {
    */
   render() {
     return (
-     <Desktop icons={apps} snap={true} launch={this.launch} />
+     <Desktop icons={apps} snap={true} launch={this.launch}>
+     &nbsp;
+     </Desktop>
     );
   }
 }
