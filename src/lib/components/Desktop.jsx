@@ -1,25 +1,21 @@
 import React, { Component } from 'react';
 
 import Slider, { Range } from 'rc-slider';
-// We can just import Slider or Range to reduce bundle size
-// import Slider from 'rc-slider/lib/Slider';
-// import Range from 'rc-slider/lib/Range';
 import 'rc-slider/assets/index.css';
 
-import DataTools from './utils/datatools';
+import DataTools from './utils/DataTools';
 import CookieStorage from './utils/cookiestorage';
 import DesktopIcon from './DesktopIcon';
 
-import '../../css/desktop.css';
-import '../../css/drydock.css';
+import './css/desktop.css';
 
-import defaultIcon from '../../css/images/app.png';
+import defaultIcon from './css/images/app.png';
 
 var marginX = 4;
 var marginY = 4;
 var paddingX = 12;
 var paddingY = 12;
-var iconDim = 64;
+var iconDim = 32;
 
 /**
  *
@@ -45,7 +41,7 @@ class Desktop extends Component {
 
     this.state = {
       iconDim: iconDim,
-      autoLayout: false,
+      autoLayout: true,
       snap: false,
       snapIcons: snapIcons,
       mouseDown: false,
@@ -165,7 +161,7 @@ class Desktop extends Component {
         }
 
         icon.x=xPos;
-	    icon.y=yPos;
+	      icon.y=yPos;
       }
     }    
 
@@ -317,11 +313,17 @@ class Desktop extends Component {
     for (let i=0;i<this.state.icons.length;i++) {
       let icon=this.state.icons [i];
       if (icon.uuid==uuid) {
-      	//console.log ("Launching: " + icon.label);
+        if (icon.type=="knossys:application"){
+          if(this.props.launch) {
+            this.props.launch(icon.id);
+          }
+        }
 
-        if (this.launchInternal (icon)==false) {
-          if (this.props.launch) {
-            this.props.launch (icon);
+        if (icon.type=="knossys:url") {
+          if (this.launchInternal (icon)==false) {
+            if (this.props.launch) {
+              this.props.launch (icon);
+            }
           }
         }
 
@@ -418,33 +420,38 @@ class Desktop extends Component {
        
     for (let i=0;i<this.state.icons.length;i++) {
       let icon=this.state.icons [i];
-      icons.push (<DesktopIcon key={"icon-"+i} icon={icon} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
+      let face=null;
+      if (typeof icon.face !== 'undefined') {
+        face=this.props.faces[icon.face];
+      }
+      icons.push (<DesktopIcon key={"icon-"+i} icon={icon} face={face} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
     }
    
     return (
       <div id="desktop" className="desktop">
+        {this.props.children}
         {icons}
         {status}
-	    <div className="drydockpanel">
-	      <button className="button" style={{width: "100%"}} id="layout" onClick={this.onLayout}>Layout</button>
+  	    <div className="drydockpanel">
+  	      <button className="button" style={{width: "100%"}} id="layout" onClick={this.onLayout}>Layout</button>
 
-	      <div className="drydockbox">
-	        <p>Auto Layout</p>
-	        <input type="checkbox" checked={this.state.autoLayout} onChange={this.onAutolayoutChange} />
-	      </div>
+  	      <div className="drydockbox">
+  	        <p>Auto Layout</p>
+  	        <input type="checkbox" checked={this.state.autoLayout} onChange={this.onAutolayoutChange} />
+  	      </div>
 
-	      <div className="drydockbox">
-	        <p>Snap to grid</p>
-	        <input type="checkbox" checked={this.state.snap} onChange={this.onSnapChange} />
-	      </div>	      
+  	      <div className="drydockbox">
+  	        <p>Snap to grid</p>
+  	        <input type="checkbox" checked={this.state.snap} onChange={this.onSnapChange} />
+  	      </div>	      
 
-	      <div className="drydockbox">
-	        <p>Icon Size: {this.state.iconDim}px</p>
-	        <div className="drydockconstrictor">
-	          <Slider min={32} max={128} defaultValue={32} value={this.state.iconDim} onChange={this.onIconSizeChange} />
-	        </div>
-	      </div>
-	    </div>
+  	      <div className="drydockbox">
+  	        <p>Icon Size: {this.state.iconDim}px</p>
+  	        <div className="drydockconstrictor">
+  	          <Slider min={32} max={128} defaultValue={32} value={this.state.iconDim} onChange={this.onIconSizeChange} />
+  	        </div>
+  	      </div>
+  	    </div>
       </div>
     );
   }

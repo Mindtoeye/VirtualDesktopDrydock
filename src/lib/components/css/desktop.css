@@ -19,15 +19,18 @@
   background-image: url('./images/backgrounds/background-dark-01.jpg');
   background-repeat: no-repeat;
   background-size: cover;
+
+  color: #c5c5c5;
 }
 
 .desktop_icon {
   padding: 2px;
-  min-width: 64px;
+  /* min-width: 64px; */
   min-height: 64px;
+  max-width: 64px;
   position: absolute;
-  display: table;		
-  /*border-collapse: collapse;*/
+  display: table;
+  /* border-collapse: collapse; */
   border: 1px solid #80808000;
 }
 
@@ -42,7 +45,7 @@
   border: 0px solid red;
 }	
 
-.desktop_icon .iconface {
+.desktop_icon .icon {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
@@ -51,13 +54,26 @@
   border: 0px solid blue;
 }	
 
+.desktop_icon .face {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0px;
+  margin: 0px;  
+  border: 0px solid blue;
+
+  color: white;
+  font-size: 20pt;
+  line-height: 10pt;
+} 
+
 .desktop_label {
   text-shadow:1px 1px 1px rgba(43,43,43,1);
   font-weight:normal;
   color:#ffffff;
   letter-spacing:0pt;
   word-spacing:2pt;
-  font-size:12px;
+  font-size:10px;
   text-align:center;
   font-family:arial, helvetica, sans-serif;
   line-height:1;

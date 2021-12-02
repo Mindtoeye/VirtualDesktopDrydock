@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import DataTools from './utils/datatools';
+import DataTools from './utils/DataTools';
 
-import '../../css/desktop.css';
+import './css/desktop.css';
 
 /**
  *
@@ -40,12 +40,18 @@ class DesktopIcon extends Component {
   /**
    * 
    */  
-  render() {      
+  render() {   
+    let icon;
+
+    if (this.props.face) {
+      icon=<div className="face">{this.props.face}</div>;
+    } else {
+      icon=<div className="icon"><img src={this.props.icon.icon} style={{padding: "0px", margin: "0px", width: this.props.dim, height: this.props.dim}} draggable="false" /></div>;
+    }
+
     return (<div className="desktop_icon" style={{left: this.props.icon.x, top: this.props.icon.y}} onMouseDown={(e) => this.onMouseDown (e,this.props.icon.uuid)} onDoubleClick={(e) => this.onDesktopIconClick (e,this.props.icon.uuid)} >
       <div className="desktop_icon_row">
-        <div className="iconface">
-          <img src={this.props.icon.icon} style={{padding: "0px", margin: "0px", width: this.props.dim, height: this.props.dim}} draggable="false" />
-        </div>
+        {icon}
       </div>
       <div className="desktop_label">{this.props.icon.label}</div>
     </div>);    
