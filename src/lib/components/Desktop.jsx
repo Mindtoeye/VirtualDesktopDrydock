@@ -3,9 +3,14 @@ import React, { Component } from 'react';
 import Slider, { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
+import { RiArrowLeftRightLine, RiArrowUpDownFill } from 'react-icons/ri';
+
+import { KButton } from '@knossys/knossys-ui-core';
+
 import DataTools from './utils/DataTools';
 import CookieStorage from './utils/cookiestorage';
 import DesktopIcon from './DesktopIcon';
+import WindowTools from './utils/WindowTools';
 
 import './css/desktop.css';
 
@@ -29,6 +34,7 @@ class Desktop extends Component {
     super (props);
 
     this.dataTools=new DataTools ();
+    this.windowTools=new WindowTools ();
     this.cookieStorage=new CookieStorage ();
 
     let snapIcons=false;
@@ -44,6 +50,7 @@ class Desktop extends Component {
       autoLayout: true,
       snap: false,
       snapIcons: snapIcons,
+      showGrid: false,
       mouseDown: false,
       mouseXOld: 0,
       mouseYOld: 0,
@@ -65,6 +72,8 @@ class Desktop extends Component {
 
     this.onIconSizeChange=this.onIconSizeChange.bind(this);
     this.onAutolayoutChange=this.onAutolayoutChange.bind(this);
+
+    this.onShowGrid=this.onShowGrid.bind(this);
 
     document.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
@@ -199,6 +208,7 @@ class Desktop extends Component {
       }   
 
       this.setState ({
+        autoLayout: false,
       	mouseXOld: oldX,
       	mouseYOld: oldY,
       	mouseX: newMouseX,
@@ -208,7 +218,7 @@ class Desktop extends Component {
       e.preventDefault ();
       e.stopPropagation ();
 
-	  return;  
+	    return;  
   	}
 
     this.setState ({
@@ -393,7 +403,7 @@ class Desktop extends Component {
   	console.log ("onAutolayoutChange ()");
 
     this.setState({
-      autoLayout: event.target.checked
+      autoLayout: true
     },(e) => {
       this.onLayout (null);
     });
@@ -411,10 +421,26 @@ class Desktop extends Component {
   }  
 
   /**
+   *
+   */
+  onShowGrid (e) {
+    console.log ("onShowGrid ()");
+
+    this.setState({
+      showGrid: e.target.checked
+    });       
+  }
+
+  /**
    * 
    */  
   render() {
+    let grid;
     let icons = [];
+
+    if (this.state.showGrid==true) {
+      grid=this.windowTools.generateGrid();
+    }
 
     let status=<div className="mousestatus">{this.state.mouseX + ", " + this.state.mouseY}</div>;
        
@@ -428,22 +454,30 @@ class Desktop extends Component {
     }
    
     return (
-      <div id="desktop" className="desktop">
+      <div id="desktop" className="knossys-dark desktop">
+        {grid}
         {this.props.children}
         {icons}
         {status}
   	    <div className="drydockpanel">
-  	      <button className="button" style={{width: "100%"}} id="layout" onClick={this.onLayout}>Layout</button>
 
-  	      <div className="drydockbox">
-  	        <p>Auto Layout</p>
-  	        <input type="checkbox" checked={this.state.autoLayout} onChange={this.onAutolayoutChange} />
-  	      </div>
+	        <KButton onClick={(e) => this.onAutolayoutChange(e)} style={{width: "100%"}}>Layout</KButton>
 
   	      <div className="drydockbox">
   	        <p>Snap to grid</p>
   	        <input type="checkbox" checked={this.state.snap} onChange={this.onSnapChange} />
-  	      </div>	      
+  	      </div>
+
+          <div className="drydockbox">
+            <p>Arrange</p>
+            <KButton classes="desktop_button_icon" onClick={(e) => this.onAutolayoutChange(e)}><RiArrowLeftRightLine /></KButton>            
+            <KButton classes="desktop_button_icon" onClick={(e) => this.onAutolayoutChange(e)}><RiArrowUpDownFill /></KButton>
+          </div>          
+
+          <div className="drydockbox">
+            <p>Show Grid</p>
+            <input type="checkbox" checked={this.state.showGrid} onChange={(e) => this.onShowGrid(e)} />
+          </div>                  
 
   	      <div className="drydockbox">
   	        <p>Icon Size: {this.state.iconDim}px</p>

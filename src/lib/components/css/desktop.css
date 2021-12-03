@@ -84,3 +84,8 @@
   border: 1px solid #dddddd;
   background: rgba(63, 191, 191, 0.1);
 }
+
+.desktop_button_icon {
+  font-size: 12pt;
+  line-height: 10pt;
+}
