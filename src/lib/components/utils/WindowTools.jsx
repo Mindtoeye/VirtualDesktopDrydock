@@ -10,7 +10,7 @@ class WindowTools {
    *
    */
   generateGrid () {
-    return (<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    return (<svg width="100%" height="100%" style={{position: "absolute"}} xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse">
           <path d="M 8 0 L 0 0 0 8" fill="none" stroke="#505050" strokeWidth="0.5"/>

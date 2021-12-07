@@ -27,6 +27,9 @@ var iconDim = 32;
  */
 class Desktop extends Component {
 
+  static LAYOUT_HORIZONTAL = 0;
+  static LAYOUT_VERTICAL = 1;
+
   /**
    * @param {any} props
    */  
@@ -48,6 +51,7 @@ class Desktop extends Component {
     this.state = {
       iconDim: iconDim,
       autoLayout: true,
+      layout: Desktop.LAYOUT_HORIZONTAL,
       snap: false,
       snapIcons: snapIcons,
       showGrid: false,
@@ -277,9 +281,9 @@ class Desktop extends Component {
    * 
    */
   onMouseUp (e) {
-	//console.log ("onMouseUp ()");
+	  //console.log ("onMouseUp ()");
 
-	var newMouseX=e.pageX;
+    var newMouseX=e.pageX;
     var newMouseY=e.pageY;
 
   	let updatedIconList=this.dataTools.deepCopy (this.state.icons);
@@ -350,32 +354,64 @@ class Desktop extends Component {
 
     let updatedIconList=this.dataTools.deepCopy (this.state.icons);
 
-    let index=0;
-    let xIndex=marginX;
-    let yIndex=marginY;
+    if (this.state.layout==Desktop.LAYOUT_HORIZONTAL) {
+      let index=0;
+      let xIndex=marginX;
+      let yIndex=marginY;
 
-    let separation=this.state.iconDim;
+      let separation=this.state.iconDim;
 
-    if (separation<64) {
-      separation=64;
-    }
-   
-    for (let j=0;j<updatedIconList.length;j++) {
-      var xPos=xIndex;
-      var yPos=yIndex;
-	      
-      index++;
-	      
-      if (index>10) {
-        index=0;
-        xIndex=marginX;
-        yIndex+=(separation+paddingY);
-      } else {
-        xIndex+=(separation+paddingX);
+      if (separation<64) {
+        separation=64;
       }
+     
+      for (let j=0;j<updatedIconList.length;j++) {
+        var xPos=xIndex;
+        var yPos=yIndex;
+  	      
+        index++;
+  	      
+        if (index>10) {
+          index=0;
+          xIndex=marginX;
+          yIndex+=(separation+paddingY);
+        } else {
+          xIndex+=(separation+paddingX);
+        }
 
-      updatedIconList [j].x=xPos;
-      updatedIconList [j].y=yPos;
+        updatedIconList [j].x=xPos;
+        updatedIconList [j].y=yPos;
+      }
+    }
+
+    if (this.state.layout==Desktop.LAYOUT_VERTICAL) {
+      let index=0;
+      let xIndex=marginX;
+      let yIndex=marginY;
+
+      let separation=this.state.iconDim;
+
+      if (separation<64) {
+        separation=64;
+      }
+     
+      for (let j=0;j<updatedIconList.length;j++) {
+        var xPos=xIndex;
+        var yPos=yIndex;
+          
+        index++;
+          
+        if (index>10) {
+          index=0;
+          yIndex=marginY;
+          xIndex+=(separation+paddingX);
+        } else {
+          yIndex+=(separation+paddingY);
+        }
+
+        updatedIconList [j].x=xPos;
+        updatedIconList [j].y=yPos;
+      }
     }
 
     this.setState ({icons: updatedIconList}, (e) => {
@@ -399,11 +435,12 @@ class Desktop extends Component {
   /**
    *
    */
-  onAutolayoutChange = (event) => {
+  onAutolayoutChange = (event,layout) => {
   	console.log ("onAutolayoutChange ()");
 
     this.setState({
-      autoLayout: true
+      autoLayout: true,
+      layout: layout
     },(e) => {
       this.onLayout (null);
     });
@@ -456,12 +493,10 @@ class Desktop extends Component {
     return (
       <div id="desktop" className="knossys-dark desktop">
         {grid}
-        {this.props.children}
         {icons}
         {status}
   	    <div className="drydockpanel">
-
-	        <KButton onClick={(e) => this.onAutolayoutChange(e)} style={{width: "100%"}}>Layout</KButton>
+	        <KButton onClick={(e) => this.onAutolayoutChange(e,this.state.layout)} style={{width: "100%"}}>Layout</KButton>
 
   	      <div className="drydockbox">
   	        <p>Snap to grid</p>
@@ -470,8 +505,8 @@ class Desktop extends Component {
 
           <div className="drydockbox">
             <p>Arrange</p>
-            <KButton classes="desktop_button_icon" onClick={(e) => this.onAutolayoutChange(e)}><RiArrowLeftRightLine /></KButton>            
-            <KButton classes="desktop_button_icon" onClick={(e) => this.onAutolayoutChange(e)}><RiArrowUpDownFill /></KButton>
+            <KButton classes="desktop_button_icon" onClick={(e) => this.onAutolayoutChange(e,Desktop.LAYOUT_HORIZONTAL)}><RiArrowLeftRightLine /></KButton>            
+            <KButton classes="desktop_button_icon" onClick={(e) => this.onAutolayoutChange(e,Desktop.LAYOUT_VERTICAL)}><RiArrowUpDownFill /></KButton>
           </div>          
 
           <div className="drydockbox">
@@ -486,6 +521,8 @@ class Desktop extends Component {
   	        </div>
   	      </div>
   	    </div>
+
+        {this.props.children}        
       </div>
     );
   }
