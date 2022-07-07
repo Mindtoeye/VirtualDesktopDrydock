@@ -5,10 +5,9 @@ import 'rc-slider/assets/index.css';
 
 import { RiArrowLeftRightLine, RiArrowUpDownFill } from 'react-icons/ri';
 
-import { KButton } from '@knossys/knossys-ui-core';
+import { KButton, KSessionStorage } from '@knossys/knossys-ui-core';
 
 import DataTools from './utils/DataTools';
-import CookieStorage from './utils/cookiestorage';
 import DesktopIcon from './DesktopIcon';
 import WindowTools from './utils/WindowTools';
 
@@ -36,9 +35,9 @@ class Desktop extends Component {
   constructor (props){
     super (props);
 
+    this.sessionStorage=new KSessionStorage ("kdesktop");
     this.dataTools=new DataTools ();
     this.windowTools=new WindowTools ();
-    this.cookieStorage=new CookieStorage ();
 
     let snapIcons=false;
 
@@ -51,8 +50,8 @@ class Desktop extends Component {
     this.state = {
       iconDim: iconDim,
       autoLayout: true,
-      layout: Desktop.LAYOUT_HORIZONTAL,
-      snap: false,
+      layout: this.sessionStorage.getIntegerValue ("direction",Desktop.LAYOUT_HORIZONTAL),
+      snap: true,
       snapIcons: snapIcons,
       showGrid: false,
       mouseDown: false,
@@ -87,6 +86,7 @@ class Desktop extends Component {
   /**
    * 
    */
+  /* 
   loadSettings () {
     if (this.cookieStorage.getCookie ("marginX")=="") {
       this.cookieStorage.setCookie ("marginX",marginX,10);
@@ -118,15 +118,20 @@ class Desktop extends Component {
       iconDim=this.cookieStorage.getCookie ("iconDim");
     }  	
   }
+  */
 
   /**
    * 
    */
   saveState () {
+    /*
   	for (let i=0;i<this.state.icons.length;i++) {
       let icon=this.state.icons [i];     
       this.cookieStorage.setCookie (icon.id,icon.x+","+icon.y,10); 
   	}
+    */
+
+    this.sessionStorage.setJSONObject ("icons",this.state.icons);
   }
 
   /**
@@ -135,6 +140,8 @@ class Desktop extends Component {
   prep (anIconList) {
   	console.log ("prep ()");
 
+    let referenceIconList=this.sessionStorage.getJSONObject ("icons");
+
     let updatedIconList=this.dataTools.deepCopy (anIconList);
 
     for (let i=0;i<updatedIconList.length;i++) {
@@ -142,6 +149,8 @@ class Desktop extends Component {
       updatedIconList [i].moving=false;
       if (!updatedIconList [i].icon) {
       	updatedIconList [i].icon=defaultIcon;
+        //updatedIconList [i].x=referenceIconList [i].x;
+        //updatedIconList [i].y=referenceIconList [i].y;
       }
     }
 
@@ -151,15 +160,20 @@ class Desktop extends Component {
    
     for (let j=0;j<updatedIconList.length;j++) {
       let icon=updatedIconList [j];
+      let processed=false;
 
-      let coords=this.cookieStorage.getCookie (updatedIconList [j].id);
-      if (coords!="") {
-      	let pos=coords.split (",");      
-      	if(pos.length>1) {
-      	  updatedIconList [j].x=parseInt(pos [0]);
-      	  updatedIconList [j].y=parseInt(pos [1]);
-      	}
-      } else {
+      if (referenceIconList) {
+        if (referenceIconList.length>0) {
+          let referenceIcon=referenceIconList [j];
+          if (referenceIcon) {
+            icon.x=referenceIconList [j].x;
+            icon.y=referenceIconList [j].y;
+            processed=true;
+          }
+        }
+      } 
+
+      if (processed==false) {
         var xPos=xIndex;
         var yPos=yIndex;
 	      
@@ -177,6 +191,8 @@ class Desktop extends Component {
 	      icon.y=yPos;
       }
     }    
+
+    console.log (updatedIconList);
 
     return (updatedIconList);
   }
@@ -442,6 +458,7 @@ class Desktop extends Component {
       autoLayout: true,
       layout: layout
     },(e) => {
+      this.sessionStorage.setIntegerValue ("direction",this.state.layout)
       this.onLayout (null);
     });
   }
