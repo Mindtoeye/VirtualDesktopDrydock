@@ -81,6 +81,20 @@ class Desktop extends Component {
   }
 
   /**
+   * Do we still need this?
+   */
+  /* 
+  saveState () {
+    //for (let i=0;i<this.state.icons.length;i++) {
+    //  let icon=this.state.icons [i];     
+    //  this.cookieStorage.setCookie (icon.id,icon.x+","+icon.y,10); 
+    //}
+
+    this.sessionStorage.setJSONObject ("icons",this.state.icons);
+  } 
+  */ 
+
+  /**
    * 
    */
   onMouseMove (e) {
@@ -205,7 +219,7 @@ class Desktop extends Component {
     this.setState({
       mouseDown: false
     },(e) => {
-      this.saveState (updatedIconList);
+      //this.saveState (updatedIconList);
       if (this.props.iconManager) {
         this.props.iconManager.setIcons(updatedIconList);
       }
@@ -325,7 +339,7 @@ class Desktop extends Component {
       }
     }
 
-    this.saveState (updatedIconList);
+    //this.saveState (updatedIconList);
 
     if (this.props.iconManager) {
       this.props.iconManager.setIcons(updatedIconList);

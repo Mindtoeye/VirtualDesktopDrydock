@@ -139,9 +139,15 @@ class DesktopIconManager {
    */
   setIcons (anAppList) {
     this.icons=anAppList;
+
+    for (let i=0;i<this.icons.length;i++) {
+      let icon=this.icons [i];     
+      this.cookieStorage.setCookie (icon.id,icon.x+","+icon.y,10); 
+    }
+
     if (this.updateDesktop!=null) {
       this.updateDesktop ();
-    }    
+    }
   }
 
   /**
