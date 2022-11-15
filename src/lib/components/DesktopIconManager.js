@@ -1,6 +1,6 @@
 
 import DataTools from './utils/DataTools';
-import CookieStorage from './utils/cookiestorage';
+import CookieStorage from './utils/CookieStorage';
 
 import defaultIcon from './css/images/app.png';
 

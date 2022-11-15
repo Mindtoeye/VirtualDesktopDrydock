@@ -5,10 +5,9 @@ import 'rc-slider/assets/index.css';
 
 import { RiArrowLeftRightLine, RiArrowUpDownFill } from 'react-icons/ri';
 
-import { KButton } from '@knossys/knossys-ui-core';
+import { KButton, KSessionStorage } from '@knossys/knossys-ui-core';
 
 import DataTools from './utils/DataTools';
-import CookieStorage from './utils/cookiestorage';
 import DesktopIcon from './DesktopIcon';
 import WindowTools from './utils/WindowTools';
 
@@ -36,9 +35,9 @@ class Desktop extends Component {
   constructor (props){
     super (props);
 
+    this.sessionStorage=new KSessionStorage ("kdesktop");
     this.dataTools=new DataTools ();
     this.windowTools=new WindowTools ();
-    this.cookieStorage=new CookieStorage ();
 
     let snapIcons=false;
 
@@ -49,8 +48,8 @@ class Desktop extends Component {
     this.state = {
       iconDim: iconDim,
       autoLayout: true,
-      layout: Desktop.LAYOUT_HORIZONTAL,
-      snap: false,
+      layout: this.sessionStorage.getIntegerValue ("direction",Desktop.LAYOUT_HORIZONTAL),
+      snap: true,
       snapIcons: snapIcons,
       showGrid: false,
       mouseDown: false,
@@ -62,7 +61,7 @@ class Desktop extends Component {
 
     //this.loadSettings ();
 
-    this.saveState = this.saveState.bind (this);
+    //this.saveState = this.saveState.bind (this);
     this.onLayout = this.onLayout.bind (this);
     this.onDesktopIconClick=this.onDesktopIconClick.bind (this);
     this.onMouseDownIcon=this.onMouseDownIcon.bind(this);
@@ -79,51 +78,6 @@ class Desktop extends Component {
     document.addEventListener('mousedown', this.onMouseDown);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
-  }
-
-  /**
-   * 
-   */
-  loadSettings () {
-    if (this.cookieStorage.getCookie ("marginX")=="") {
-      this.cookieStorage.setCookie ("marginX",marginX,10);
-    } else {
-      marginX=this.cookieStorage.getCookie ("marginX");
-    }
-
-    if (this.cookieStorage.getCookie ("marginY")=="") {
-      this.cookieStorage.setCookie ("marginY",marginY,10);
-    } else {
-      marginY=this.cookieStorage.getCookie ("marginY");
-    }
-
-    if (this.cookieStorage.getCookie ("paddingX")=="") {
-      this.cookieStorage.setCookie ("paddingX",paddingX,10);
-    } else {
-      paddingX=this.cookieStorage.getCookie ("paddingX");
-    }
-
-    if (this.cookieStorage.getCookie ("paddingY")=="") {
-      this.cookieStorage.setCookie ("paddingY",paddingY,10);
-    } else {
-      paddingY=this.cookieStorage.getCookie ("paddingY");
-    }
-
-    if (this.cookieStorage.getCookie ("iconDim")=="") {
-      this.cookieStorage.setCookie ("iconDim",iconDim,10);
-    } else {
-      iconDim=this.cookieStorage.getCookie ("iconDim");
-    }  	
-  }
-
-  /**
-   * 
-   */
-  saveState () {
-  	for (let i=0;i<this.props.icons.length;i++) {
-      let icon=this.props.icons [i];     
-      this.cookieStorage.setCookie (icon.id,icon.x+","+icon.y,10); 
-  	}
   }
 
   /**
@@ -409,6 +363,7 @@ class Desktop extends Component {
       autoLayout: true,
       layout: layout
     },(e) => {
+      this.sessionStorage.setIntegerValue ("direction",this.state.layout)
       this.onLayout (null);
     });
   }
