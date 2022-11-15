@@ -46,8 +46,6 @@ class Desktop extends Component {
       snapIcons=props.snap;
     }
 
-    let prepped=this.prep (this.props.icons);
-
     this.state = {
       iconDim: iconDim,
       autoLayout: true,
@@ -59,8 +57,7 @@ class Desktop extends Component {
       mouseXOld: 0,
       mouseYOld: 0,
       mouseX: 0,
-      mouseY: 0,
-      icons: prepped
+      mouseY: 0
     }
 
     //this.loadSettings ();
@@ -123,62 +120,10 @@ class Desktop extends Component {
    * 
    */
   saveState () {
-  	for (let i=0;i<this.state.icons.length;i++) {
-      let icon=this.state.icons [i];     
+  	for (let i=0;i<this.props.icons.length;i++) {
+      let icon=this.props.icons [i];     
       this.cookieStorage.setCookie (icon.id,icon.x+","+icon.y,10); 
   	}
-  }
-
-  /**
-   * 
-   */
-  prep (anIconList) {
-  	console.log ("prep ()");
-
-    let updatedIconList=this.dataTools.deepCopy (anIconList);
-
-    for (let i=0;i<updatedIconList.length;i++) {
-      updatedIconList [i].uuid=this.dataTools.uuidv4();
-      updatedIconList [i].moving=false;
-      if (!updatedIconList [i].icon) {
-      	updatedIconList [i].icon=defaultIcon;
-      }
-    }
-
-    let index=0;
-    let xIndex=marginX;
-    let yIndex=marginY;
-   
-    for (let j=0;j<updatedIconList.length;j++) {
-      let icon=updatedIconList [j];
-
-      let coords=this.cookieStorage.getCookie (updatedIconList [j].id);
-      if (coords!="") {
-      	let pos=coords.split (",");      
-      	if(pos.length>1) {
-      	  updatedIconList [j].x=parseInt(pos [0]);
-      	  updatedIconList [j].y=parseInt(pos [1]);
-      	}
-      } else {
-        var xPos=xIndex;
-        var yPos=yIndex;
-	      
-        index++;
-	      
-        if (index>10) {
-          index=0;
-          xIndex=marginX;
-          yIndex+=(iconDim+paddingY);
-        } else {
-          xIndex+=(iconDim+paddingX);
-        }
-
-        icon.x=xPos;
-	      icon.y=yPos;
-      }
-    }    
-
-    return (updatedIconList);
   }
 
   /**
@@ -195,7 +140,7 @@ class Desktop extends Component {
       var deltaX = (newMouseX - this.state.mouseX);
       var deltaY = (newMouseY - this.state.mouseY);
 
-  	  let updatedIconList=this.dataTools.deepCopy (this.state.icons);
+  	  let updatedIconList=this.dataTools.deepCopy (this.props.icons);
 
   	  for (let i=0;i<updatedIconList.length;i++) {
         let icon=updatedIconList [i];
@@ -216,11 +161,15 @@ class Desktop extends Component {
       	mouseXOld: oldX,
       	mouseYOld: oldY,
       	mouseX: newMouseX,
-      	mouseY: newMouseY,
-	    icons: updatedIconList});
+      	mouseY: newMouseY
+      });
 
       e.preventDefault ();
       e.stopPropagation ();
+
+      if (this.props.iconManager) {
+        this.props.iconManager.setIcons(updatedIconList);
+      }      
 
 	    return;  
   	}
@@ -241,7 +190,7 @@ class Desktop extends Component {
   onMouseDownIcon (e,uuid) {
   	//console.log ("onMouseDownIcon ("+uuid+")");
 
-  	let updatedIconList=this.dataTools.deepCopy (this.state.icons);
+  	let updatedIconList=this.dataTools.deepCopy (this.props.icons);
 
     for (let i=0;i<updatedIconList.length;i++) {
       let icon=updatedIconList [i];
@@ -251,9 +200,15 @@ class Desktop extends Component {
       }
     }    
 
+    /*
     this.setState({
   	  icons: updatedIconList      
     });    
+    */
+
+    if (this.props.iconManager) {
+      this.props.iconManager.setIcons(updatedIconList);
+    }
   }   
 
   /**
@@ -286,7 +241,7 @@ class Desktop extends Component {
     var newMouseX=e.pageX;
     var newMouseY=e.pageY;
 
-  	let updatedIconList=this.dataTools.deepCopy (this.state.icons);
+  	let updatedIconList=this.dataTools.deepCopy (this.props.icons);
 
     for (let i=0;i<updatedIconList.length;i++) {
       let icon=updatedIconList [i];
@@ -294,10 +249,12 @@ class Desktop extends Component {
     }
 
     this.setState({
-      mouseDown: false,
-  	  icons: updatedIconList      
+      mouseDown: false
     },(e) => {
-      this.saveState ();
+      this.saveState (updatedIconList);
+      if (this.props.iconManager) {
+        this.props.iconManager.setIcons(updatedIconList);
+      }
     });
 
     e.preventDefault ();
@@ -324,8 +281,8 @@ class Desktop extends Component {
   onDesktopIconClick (e,uuid) {
   	//console.log ("onDesktopIconClick ("+uuid+")");
 
-    for (let i=0;i<this.state.icons.length;i++) {
-      let icon=this.state.icons [i];
+    for (let i=0;i<this.props.icons.length;i++) {
+      let icon=this.props.icons [i];
       if (icon.uuid==uuid) {
         if (icon.type=="knossys:application"){
           if(this.props.launch) {
@@ -352,7 +309,7 @@ class Desktop extends Component {
   onLayout (e) {
   	console.log ("onLayout ()");
 
-    let updatedIconList=this.dataTools.deepCopy (this.state.icons);
+    let updatedIconList=this.dataTools.deepCopy (this.props.icons);
 
     if (this.state.layout==Desktop.LAYOUT_HORIZONTAL) {
       let index=0;
@@ -414,9 +371,19 @@ class Desktop extends Component {
       }
     }
 
+    this.saveState (updatedIconList);
+
+    if (this.props.iconManager) {
+      this.props.iconManager.setIcons(updatedIconList);
+    } else {
+
+    }
+
+    /*
     this.setState ({icons: updatedIconList}, (e) => {
       this.saveState ();
     });
+    */
   }
 
   /**
@@ -471,6 +438,13 @@ class Desktop extends Component {
   /**
    * 
    */  
+  onDebug (e) {
+    console.log (this.props.apps);
+  }
+
+  /**
+   * 
+   */  
   render() {
     let grid;
     let icons = [];
@@ -481,8 +455,8 @@ class Desktop extends Component {
 
     let status=<div className="mousestatus">{this.state.mouseX + ", " + this.state.mouseY}</div>;
        
-    for (let i=0;i<this.state.icons.length;i++) {
-      let icon=this.state.icons [i];
+    for (let i=0;i<this.props.icons.length;i++) {
+      let icon=this.props.icons [i];
       let face=null;
       if (typeof icon.face !== 'undefined') {
         face=this.props.faces[icon.face];
@@ -497,6 +471,7 @@ class Desktop extends Component {
         {status}
   	    <div className="drydockpanel">
 	        <KButton onClick={(e) => this.onAutolayoutChange(e,this.state.layout)} style={{width: "100%"}}>Layout</KButton>
+          <KButton onClick={(e) => this.onDebug(e)} style={{width: "100%"}}>Debug</KButton>
 
   	      <div className="drydockbox">
   	        <p>Snap to grid</p>

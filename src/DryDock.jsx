@@ -3,9 +3,11 @@ import React, { Component } from 'react';
 import { RiStackshareLine } from 'react-icons/ri';
 import { VscFileSubmodule } from 'react-icons/vsc';
 import { MdPermIdentity } from 'react-icons/md';
+import { GiPortal } from 'react-icons/gi';
 
 import DataTools from './lib/components/utils/DataTools';
 import Desktop from './lib/components/Desktop';
+import DesktopIconManager from './lib/components/DesktopIconManager';
 
 import '../css/main.css';
 import '../css/drydock.css';
@@ -23,35 +25,77 @@ class DryDock extends Component {
    */
   constructor(props) {
     super(props);
+
+    let testTimer=-1;
     
     this.dataTools=new DataTools ();
 
-    this.faces=[<RiStackshareLine/>,<VscFileSubmodule/>, <MdPermIdentity />];
+    this.faces=[<RiStackshareLine/>,<VscFileSubmodule/>, <MdPermIdentity />, <GiPortal />];
 
     this.state={
-      apps: [{
-          label : "Pipeliner",
-          id: "pipeliner",
-          type: "knossys:application",
-          face: 0,
-          multiple: false
-        },{
-          label : "File Mananger",
-          id: "fmanager",
-          type : "knossys:application",
-          face: 1,
-          multiple: true
-        },{
-          label : "Credentials",
-          id: "credentials",
-          type : "knossys:application",
-          face: 2,
-          multiple: false
-        }
-      ]
+      trigger: 0
     };
 
+    this.update = this.update.bind(this);
     this.launch = this.launch.bind(this);
+    this.testDisabling = this.testDisabling.bind(this);
+
+    this.desktopIconManager=new DesktopIconManager ();
+    this.desktopIconManager.setUpdateDesktop(this.update);    
+  }
+
+  /**
+   *
+   */
+  componentDidMount () {
+    console.log ("componentDidMount ()");
+
+    this.desktopIconManager.addApp ("Pipeliner","pipeliner","knossys:application",0);
+    this.desktopIconManager.addApp ("File Manager","filemanager","knossys:application",1);
+    this.desktopIconManager.addApp ("Credentials","credentials","knossys:application",2);
+    this.desktopIconManager.addApp ("Data Portal","dataportal","knossys:application",3);
+
+    this.testTimer=setInterval(this.testDisabling,10000);
+  }
+
+  /**
+   *
+   */
+  componentWillUnmount () {
+    console.log ("componentWillUnmount ()");
+    clearInterval(this.testTimer);
+  }  
+
+  /**
+   * 
+   */
+  testDisabling () {
+    console.log ("testDisabling ()");
+
+    let testIcon=this.desktopIconManager.getIcon ("dataportal");
+    if (testIcon) {
+      if (testIcon.disabled==false) {
+        testIcon.disabled=true;
+        //this.desktopIconManager.disableIcon ("dataportal",true);
+      } else {
+        testIcon.disabled=false;
+        //this.desktopIconManager.disableIcon ("dataportal",false);
+      }
+
+      this.update();
+    } else {
+      console.log ("Error target icon not found");
+    }
+  }
+
+  /**
+   * 
+   */
+  update () {
+    let trgr=this.state.trigger;
+    this.setState ({
+      trigger: trgr++
+    });
   }
 
   /**
@@ -67,8 +111,7 @@ class DryDock extends Component {
    */
   render() {
     return (
-     <Desktop icons={this.state.apps} faces={this.faces} snap={true} launch={this.launch}>
-     </Desktop>
+      <Desktop trigger={this.state.trigger} iconManager={this.desktopIconManager} icons={this.desktopIconManager.getIcons ()} faces={this.faces} snap={true} launch={this.launch} />
     );
   }
 }

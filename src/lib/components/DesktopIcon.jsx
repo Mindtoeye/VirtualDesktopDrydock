@@ -23,6 +23,11 @@ class DesktopIcon extends Component {
    * @param {any} e
    */
   onDesktopIconClick (e,uuid) {
+    if (this.props.icon.disabled==true) {
+      console.log ("Icon disabled, bump");
+      return;
+    }
+
     if (this.props.onDesktopIconClick) {
       this.props.onDesktopIconClick (e,uuid);
     }
@@ -42,6 +47,11 @@ class DesktopIcon extends Component {
    */  
   render() {   
     let icon;
+    let iconOpacity=1.0;
+
+    if (this.props.icon.disabled==true) {
+      iconOpacity=0.3;
+    }
 
     if (this.props.face) {
       icon=<div className="face">{this.props.face}</div>;
@@ -49,7 +59,7 @@ class DesktopIcon extends Component {
       icon=<div className="icon"><img src={this.props.icon.icon} style={{padding: "0px", margin: "0px", width: this.props.dim, height: this.props.dim}} draggable="false" /></div>;
     }
 
-    return (<div className="desktop_icon" style={{left: this.props.icon.x, top: this.props.icon.y}} onMouseDown={(e) => this.onMouseDown (e,this.props.icon.uuid)} onDoubleClick={(e) => this.onDesktopIconClick (e,this.props.icon.uuid)} >
+    return (<div className="desktop_icon" style={{left: this.props.icon.x, top: this.props.icon.y, opacity: iconOpacity}} onMouseDown={(e) => this.onMouseDown (e,this.props.icon.uuid)} onDoubleClick={(e) => this.onDesktopIconClick (e,this.props.icon.uuid)} >
       <div className="desktop_icon_row">
         {icon}
       </div>
