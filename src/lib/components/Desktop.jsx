@@ -408,7 +408,7 @@ class Desktop extends Component {
    * 
    */  
   onDebug (e) {
-    console.log (this.props.apps);
+    console.log (this.props.icons);
   }
 
   /**
@@ -426,11 +426,13 @@ class Desktop extends Component {
        
     for (let i=0;i<this.props.icons.length;i++) {
       let icon=this.props.icons [i];
-      let face=null;
-      if (typeof icon.face !== 'undefined') {
-        face=this.props.faces[icon.face];
+      if (icon.visible==true) {
+        let face=null;
+        if (typeof icon.face !== 'undefined') {
+          face=this.props.faces[icon.face];
+        }
+        icons.push (<DesktopIcon key={"icon-"+i} icon={icon} face={face} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
       }
-      icons.push (<DesktopIcon key={"icon-"+i} icon={icon} face={face} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
     }
    
     return (

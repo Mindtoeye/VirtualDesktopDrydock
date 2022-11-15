@@ -70,9 +70,11 @@ class DryDock extends Component {
    * 
    */
   testDisabling () {
-    console.log ("testDisabling ()");
+    //console.log ("testDisabling ()");
 
-    let testIcon=this.desktopIconManager.getIcon ("dataportal");
+    let testIcon=null;
+
+    testIcon=this.desktopIconManager.getIcon ("dataportal");
     if (testIcon) {
       if (testIcon.disabled==false) {
         testIcon.disabled=true;
@@ -81,11 +83,22 @@ class DryDock extends Component {
         testIcon.disabled=false;
         //this.desktopIconManager.disableIcon ("dataportal",false);
       }
-
-      this.update();
     } else {
       console.log ("Error target icon not found");
     }
+
+    testIcon=this.desktopIconManager.getIcon ("filemanager");
+    if (testIcon) {
+      if (testIcon.visible==false) {
+        testIcon.visible=true;
+      } else {
+        testIcon.visible=false;
+      }
+    } else {
+      console.log ("Error target icon not found");
+    }
+
+    this.update();      
   }
 
   /**
@@ -111,7 +124,13 @@ class DryDock extends Component {
    */
   render() {
     return (
-      <Desktop trigger={this.state.trigger} iconManager={this.desktopIconManager} icons={this.desktopIconManager.getIcons ()} faces={this.faces} snap={true} launch={this.launch} />
+      <Desktop 
+        trigger={this.state.trigger} 
+        iconManager={this.desktopIconManager} 
+        icons={this.desktopIconManager.getIcons ()} 
+        faces={this.faces} 
+        snap={true} 
+        launch={this.launch} />
     );
   }
 }
