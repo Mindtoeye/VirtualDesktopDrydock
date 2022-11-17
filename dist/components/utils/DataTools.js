@@ -4,13 +4,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 /**
  * 
  * @returns
@@ -19,7 +15,6 @@ var DataTools = /*#__PURE__*/function () {
   function DataTools() {
     _classCallCheck(this, DataTools);
   }
-
   _createClass(DataTools, [{
     key: "deepCopy",
     value:
@@ -32,10 +27,10 @@ var DataTools = /*#__PURE__*/function () {
     function deepCopy(anObject) {
       return JSON.parse(JSON.stringify(anObject));
     }
+
     /**
      * 
      */
-
   }, {
     key: "generateTableHeader",
     value: function generateTableHeader() {
@@ -47,15 +42,14 @@ var DataTools = /*#__PURE__*/function () {
         accessor: 'value'
       }];
     }
+
     /**
      * 
      */
-
   }, {
     key: "parameterSetValue",
     value: function parameterSetValue(aParameters, aParameter, aValue) {
       console.log("parameterSetValue (" + aValue + ")");
-
       for (var key in aParameters) {
         if (aParameters.hasOwnProperty(key)) {
           if (key == aParameter) {
@@ -63,13 +57,12 @@ var DataTools = /*#__PURE__*/function () {
           }
         }
       }
-
       return aParameters;
     }
+
     /**
      * 
      */
-
   }, {
     key: "handleParameterChange",
     value: function handleParameterChange(param, event) {
@@ -77,18 +70,18 @@ var DataTools = /*#__PURE__*/function () {
       var data = event.target.value;
       console.log(param + " => " + data);
     }
+
     /**
      * This is a method that generates a shallow, non-editable version of a
      * parameter list
      */
-
   }, {
     key: "parameterJSONtoArray",
     value: function parameterJSONtoArray(anObjectMap) {
       //console.log ("parameterJSONtoArray ()");
       //console.log ("Parameter object: " + JSON.stringify (anObjectMap));
-      var newArray = new Array();
 
+      var newArray = new Array();
       for (var key in anObjectMap) {
         if (anObjectMap.hasOwnProperty(key)) {
           if (key != "dummy") {
@@ -100,56 +93,52 @@ var DataTools = /*#__PURE__*/function () {
           }
         }
       }
-
       return newArray;
     }
+
     /**
      * 
      */
-
   }, {
     key: "parameterArrayToJSON",
     value: function parameterArrayToJSON(anArray) {
       var parameterObject = new Object();
-
       for (var i = 0; i < anArray.length; i++) {
         var testObject = anArray[i];
-
         if (testObject.path) {
           parameterObject[testObject.parameter] = testObject.path;
         } else {
           parameterObject[testObject.parameter] = testObject.value;
         }
       }
-
       return parameterObject;
     }
+
     /**
      * 
      */
-
   }, {
     key: "jsonToTable",
     value: function jsonToTable(tablejson) {
       return this.parameterJSONtoArray(tablejson);
     }
+
     /**
      *
      */
-
   }, {
     key: "uuidv4",
     value: function uuidv4() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : r & 0x3 | 0x8;
+          v = c == 'x' ? r : r & 0x3 | 0x8;
         return v.toString(16);
       });
     }
+
     /**
      *
      */
-
   }, {
     key: "deleteElement",
     value: function deleteElement(anArray, aTarget) {
@@ -160,13 +149,12 @@ var DataTools = /*#__PURE__*/function () {
           return anArray;
         }
       }
-
       return anArray;
     }
+
     /**
      *
      */
-
   }, {
     key: "removeElement",
     value: function removeElement(anArray, aTarget) {
@@ -177,52 +165,47 @@ var DataTools = /*#__PURE__*/function () {
         }
       }
     }
+
     /**
      *
      */
-
   }, {
     key: "popElement",
     value: function popElement(anArray) {
       console.log("popElement ()");
-
       if (!anArray) {
         return anArray;
       }
-
       if (anArray.length == 0) {
         return anArray;
       }
-
       console.log("Before pop: " + anArray.length);
       anArray.splice(anArray.length - 1, 1);
       console.log("After pop: " + anArray.length);
       return anArray;
     }
+
     /**
      * https://www.mattzeunert.com/2016/01/28/javascript-deep-equal.html
      */
-
   }, {
     key: "jsonEqual",
     value: function jsonEqual(a, b) {
       return JSON.stringify(a) === JSON.stringify(b);
     }
+
     /**
      *
      */
-
   }, {
     key: "syntaxHighlight",
     value: function syntaxHighlight(json) {
       if (typeof json != 'string') {
         json = JSON.stringify(json, undefined, 2);
       }
-
       json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
         var cls = 'number';
-
         if (/^"/.test(match)) {
           if (/:$/.test(match)) {
             cls = 'key';
@@ -234,14 +217,13 @@ var DataTools = /*#__PURE__*/function () {
         } else if (/null/.test(match)) {
           cls = 'null';
         }
-
         return '<span class="' + cls + '">' + match + '</span>';
       });
     }
+
     /**
      *
      */
-
   }, {
     key: "getDateString",
     value: function getDateString() {
@@ -252,9 +234,7 @@ var DataTools = /*#__PURE__*/function () {
       return dateTime;
     }
   }]);
-
   return DataTools;
 }();
-
 var _default = DataTools;
 exports["default"] = _default;

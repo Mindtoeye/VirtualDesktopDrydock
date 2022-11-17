@@ -98,17 +98,19 @@ class Desktop extends Component {
    * 
    */
   onMouseMove (e) {
-  	var oldX = this.state.mouseX;
-  	var oldY = this.state.mouseY;
+  	let oldX = this.state.mouseX;
+  	let oldY = this.state.mouseY;
 
-    var newMouseX=e.pageX;
-    var newMouseY=e.pageY;
+    let newMouseX=e.pageX;
+    let newMouseY=e.pageY;
 
   	if (this.state.mouseDown==true) {
-      var deltaX = (newMouseX - this.state.mouseX);
-      var deltaY = (newMouseY - this.state.mouseY);
+      let deltaX = (newMouseX - this.state.mouseX);
+      let deltaY = (newMouseY - this.state.mouseY);
 
-  	  let updatedIconList=this.dataTools.deepCopy (this.props.icons);
+      let icons=this.props.iconManager.getIcons ();
+
+  	  let updatedIconList=this.dataTools.deepCopy (icons);
 
   	  for (let i=0;i<updatedIconList.length;i++) {
         let icon=updatedIconList [i];
@@ -149,7 +151,7 @@ class Desktop extends Component {
       mouseY: newMouseY});
 
     e.preventDefault ();
-    e.stopPropagation ();      
+    e.stopPropagation ();
   }
 
   /**
@@ -158,7 +160,9 @@ class Desktop extends Component {
   onMouseDownIcon (e,uuid) {
   	//console.log ("onMouseDownIcon ("+uuid+")");
 
-  	let updatedIconList=this.dataTools.deepCopy (this.props.icons);
+    let icons=this.props.iconManager.getIcons ();
+
+  	let updatedIconList=this.dataTools.deepCopy (icons);
 
     for (let i=0;i<updatedIconList.length;i++) {
       let icon=updatedIconList [i];
@@ -209,7 +213,9 @@ class Desktop extends Component {
     var newMouseX=e.pageX;
     var newMouseY=e.pageY;
 
-  	let updatedIconList=this.dataTools.deepCopy (this.props.icons);
+    let icons=this.props.iconManager.getIcons ();
+
+  	let updatedIconList=this.dataTools.deepCopy (icons);
 
     for (let i=0;i<updatedIconList.length;i++) {
       let icon=updatedIconList [i];
@@ -249,8 +255,10 @@ class Desktop extends Component {
   onDesktopIconClick (e,uuid) {
   	//console.log ("onDesktopIconClick ("+uuid+")");
 
-    for (let i=0;i<this.props.icons.length;i++) {
-      let icon=this.props.icons [i];
+    let icons=this.props.iconManager.getIcons ();
+
+    for (let i=0;i<icons.length;i++) {
+      let icon=icons [i];
       if (icon.uuid==uuid) {
         if (icon.type=="knossys:application"){
           if(this.props.launch) {
@@ -277,7 +285,9 @@ class Desktop extends Component {
   onLayout (e) {
   	console.log ("onLayout ()");
 
-    let updatedIconList=this.dataTools.deepCopy (this.props.icons);
+    let icons=this.props.iconManager.getIcons ();
+
+    let updatedIconList=this.dataTools.deepCopy (icons);
 
     if (this.state.layout==Desktop.LAYOUT_HORIZONTAL) {
       let index=0;
@@ -408,7 +418,8 @@ class Desktop extends Component {
    * 
    */  
   onDebug (e) {
-    console.log (this.props.icons);
+    let icons=this.props.iconManager.getIcons ();
+    console.log (icons);
   }
 
   /**
@@ -416,7 +427,7 @@ class Desktop extends Component {
    */  
   render() {
     let grid;
-    let icons = [];
+    let activeicons = [];
 
     if (this.state.showGrid==true) {
       grid=this.windowTools.generateGrid();
@@ -424,21 +435,23 @@ class Desktop extends Component {
 
     let status=<div className="mousestatus">{this.state.mouseX + ", " + this.state.mouseY}</div>;
        
-    for (let i=0;i<this.props.icons.length;i++) {
-      let icon=this.props.icons [i];
+    let icons=this.props.iconManager.getIcons ();
+
+    for (let i=0;i<icons.length;i++) {
+      let icon=icons [i];
       if (icon.visible==true) {
         let face=null;
         if (typeof icon.face !== 'undefined') {
           face=this.props.faces[icon.face];
         }
-        icons.push (<DesktopIcon key={"icon-"+i} icon={icon} face={face} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
+        activeicons.push (<DesktopIcon key={"icon-"+i} icon={icon} face={face} dim={this.state.iconDim} onDesktopIconClick={this.onDesktopIconClick} onMouseDown={this.onMouseDownIcon} />);
       }
     }
    
     return (
       <div id="desktop" className="knossys-dark desktop">
         {grid}
-        {icons}
+        {activeicons}
         {status}
   	    <div className="drydockpanel">
 	        <KButton onClick={(e) => this.onAutolayoutChange(e,this.state.layout)} style={{width: "100%"}}>Layout</KButton>

@@ -102,7 +102,8 @@ class DryDock extends Component {
   }
 
   /**
-   * 
+   * change this value to trigger a state update in the desktop. Haven't made a decision yet on
+   * which system/library paradigm to use to accomplish this in a cleaner way
    */
   update () {
     let trgr=this.state.trigger;
@@ -125,9 +126,8 @@ class DryDock extends Component {
   render() {
     return (
       <Desktop 
-        trigger={this.state.trigger} 
+        trigger={this.state.trigger} // change this value to trigger a state update in the desktop
         iconManager={this.desktopIconManager} 
-        icons={this.desktopIconManager.getIcons ()} 
         faces={this.faces} 
         snap={true} 
         launch={this.launch} />
